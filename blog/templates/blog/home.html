@@ -1,0 +1,48 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <h1>Blog home!</h1>
+    {% for post in posts %}
+       <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
+            <div class="media-body">
+                <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                <small class="text-muted">{{ post.date_posted|date:"F d, Y"}}</small>
+                </div>
+                <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                <p class="article-content">{{ post.content }}</p>
+            </div>
+</article>
+    {% endfor %}
+    {% if is_paginated %}
+    {% comment %} it depends on the paginate by in the views sections {% endcomment %}
+    {% comment %} if less than that number post is there then there will be no paginations  {% endcomment %}
+        {% if page_obj.has_previous %}
+        <a class="btn btn-outline-info mb-4"href="?page=1">first</a>
+        <a class="btn btn-outline-info mb-4"href="?page={{ page_obj.previous_page_number }}">previous page number</a>
+        
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% comment %} list of all pages numbers is page_range  {% endcomment %}
+            {% if page_obj.number == num %}
+               <a class="btn btn-info mb-4"href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            {% comment %} elif condition works if pageobj_number==num  {% endcomment %}
+            {% comment %} it shows the previous three numbers and after three numbers  {% endcomment %}
+               <a class="btn btn-outline-info mb-4"href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}  
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4"href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4"href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% comment %} .numgaes means total number pf pages it connects to the last pages  {% endcomment %}
+            
+        {% endif %}    
+   
+    {% endif %}  
+        
+
+{% endblock content %}  
+
+
+
